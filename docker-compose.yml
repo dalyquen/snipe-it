@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: snipe-mysql
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: snipeit
+      MYSQL_USER: snipeit
+      MYSQL_PASSWORD: snipeitpassword
+
+  snipeit:
+    image: snipe/snipe-it:latest
+    container_name: snipeit
+    depends_on:
+      - mysql
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY=base64:snipeit
+      - APP_URL=http://localhost
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_DATABASE=snipeit
+      - DB_USERNAME=snipeit
+      - DB_PASSWORD=snipeitpassword
+      - MAIL_DRIVER=log
+      - TZ=Argentina/Buenos_Aires
+    ports:
+      - "8080:80"
+    volumes:
+      - snipe-data:/var/lib/snipeit
+
+volumes:
+  mysql-data:
+  snipe-data:
